@@ -1,0 +1,71 @@
+services:
+  kafka:
+    image: confluentinc/cp-kafka:7.7.1
+    container_name: kafka
+    ports:
+      - "9092:9092"
+    environment:
+      KAFKA_PROCESS_ROLES: controller,broker
+      KAFKA_NODE_ID: 1
+      KAFKA_CONTROLLER_QUORUM_VOTERS: "1@kafka:9093"
+      KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:9092,CONTROLLER://0.0.0.0:9093
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://localhost:9092
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,CONTROLLER:PLAINTEXT
+      KAFKA_CONTROLLER_LISTENER_NAMES: CONTROLLER
+      KAFKA_CLUSTER_ID: MkU3OEVBNTcwNTJENDM2Qk
+    command: >
+      bash -c "
+        if [ ! -f /var/lib/kafka/data/meta.properties ]; then
+          kafka-storage format --cluster-id MkU3OEVBNTcwNTJENDM2Qk --config /etc/kafka/kafka.properties
+        fi &&
+        kafka-server-start /etc/kafka/kafka.properties
+      "
+    volumes:
+      - kafka-data:/var/lib/kafka/data
+
+  product-db:
+    image: mongo:7.0
+    container_name: product-db
+    ports:
+      - "27017:27017"
+    volumes:
+      - product-db-data:/data/db
+    environment:
+      MONGO_INITDB_DATABASE: productdb
+
+  login-db:
+    image: mongo:7.0
+    container_name: login-db
+    ports:
+      - "27018:27017"
+    volumes:
+      - login-db-data:/data/db
+    environment:
+      MONGO_INITDB_DATABASE: logindb
+
+  user-db-node:
+    image: mongo:7.0
+    container_name: user-db-node
+    ports:
+      - "27019:27017"
+    volumes:
+      - user-db-node-data:/data/db
+    environment:
+      MONGO_INITDB_DATABASE: userdbnode
+
+  user-db-csharp:
+    image: mongo:7.0
+    container_name: user-db-csharp
+    ports:
+      - "27020:27017"
+    volumes:
+      - user-db-csharp-data:/data/db
+    environment:
+      MONGO_INITDB_DATABASE: userdbcsharp
+
+volumes:
+  kafka-data:
+  product-db-data:
+  login-db-data:
+  user-db-node-data:
+  user-db-csharp-data:

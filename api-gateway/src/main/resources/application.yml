@@ -1,0 +1,28 @@
+server:
+  port: 8083
+spring:
+  application:
+    name: api-gateway
+  cloud:
+    gateway:
+      routes:
+        - id: product
+          uri: http://localhost:8081/
+          predicates:
+            - Path=/api/product/**
+        - id: login
+          uri: http://localhost:8082/
+          predicates:
+            - Path=/api/login/**
+        - id: user-profile
+          uri: http://localhost:8084/
+          predicates:
+            - Path=/api/user/**
+        - id: user-profile-csharp
+          uri: http://localhost:8085/
+          predicates:
+            - Path=/api/user-csharp/**
+        - id: kafka-producer
+          uri: http://localhost:8081/
+          predicates:
+            - Path=/api/kafka/**

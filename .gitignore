@@ -1,0 +1,115 @@
+# =========================
+# 🌱 Global ignores
+# =========================
+*.log
+*.tmp
+*.swp
+*.swo
+*.bak
+.DS_Store
+Thumbs.db
+.env
+.env.*
+.vscode/
+.idea/
+*.iml
+*.class
+*.user
+*.suo
+
+# =========================
+# 🔸 Java / Spring Boot
+# =========================
+# Maven
+target/
+pom.xml.tag
+pom.xml.releaseBackup
+pom.xml.versionsBackup
+release.properties
+dependency-reduced-pom.xml
+
+# Gradle
+.gradle/
+build/
+!gradle/wrapper/gradle-wrapper.jar
+.gradle-cache/
+
+# Spring Boot
+*.jar
+*.war
+*.ear
+
+# IntelliJ
+out/
+
+# =========================
+# 🔹 C# / ASP.NET Core
+# =========================
+bin/
+obj/
+*.dll
+*.exe
+*.pdb
+*.cache
+*.mdb
+*.db
+*.sdf
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+# ASP.NET specific
+project.lock.json
+project.fragment.lock.json
+artifacts/
+
+# Rider
+.idea/
+*.sln.iml
+
+# =========================
+# 🔸 Node.js / Express
+# =========================
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+dist/
+build/
+.next/
+out/
+.cache/
+
+# TypeScript
+*.tsbuildinfo
+
+# PM2 (Process Manager)
+pids/
+logs/
+*.pid
+
+# =========================
+# 🔧 Docker & CI/CD (Optional)
+# =========================
+docker-compose.override.yml
+docker.env
+.docker/
+*.local
+
+# =========================
+# 🧪 Test & Coverage
+# =========================
+coverage/
+test-output/
+test-results/
+reports/
+
+# =========================
+# 💡 Misc
+# =========================
+*.vs/
+*.tgz
+*.lock
+
