@@ -1,67 +1,93 @@
 services:
   kafka:
-    image: confluentinc/cp-kafka:7.7.1
+    image: confluentinc/cp-kafka:7.8.0
     container_name: kafka
     ports:
-      - "9092:9092"
+      - '9092:9092'
     environment:
+      # KRaft Configuration
       KAFKA_PROCESS_ROLES: controller,broker
       KAFKA_NODE_ID: 1
-      KAFKA_CONTROLLER_QUORUM_VOTERS: "1@kafka:9093"
+      KAFKA_CONTROLLER_QUORUM_VOTERS: '1@kafka:9093'
       KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:9092,CONTROLLER://0.0.0.0:9093
       KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://localhost:9092
       KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,CONTROLLER:PLAINTEXT
       KAFKA_CONTROLLER_LISTENER_NAMES: CONTROLLER
+
+      # Cluster ID - cần cả hai biến này
       KAFKA_CLUSTER_ID: MkU3OEVBNTcwNTJENDM2Qk
-    command: >
-      bash -c "
-        if [ ! -f /var/lib/kafka/data/meta.properties ]; then
-          kafka-storage format --cluster-id MkU3OEVBNTcwNTJENDM2Qk --config /etc/kafka/kafka.properties
-        fi &&
-        kafka-server-start /etc/kafka/kafka.properties
-      "
+      CLUSTER_ID: MkU3OEVBNTcwNTJENDM2Qk # Script validation cần biến này
+
+      # Single node settings
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
+
+      # Storage
+      KAFKA_LOG_DIRS: /var/lib/kafka/data
+
+      # Auto create topics
+      KAFKA_AUTO_CREATE_TOPICS_ENABLE: 'true'
+
+      # Disable ZooKeeper completely
+      KAFKA_ZOOKEEPER_CONNECT: ''
     volumes:
       - kafka-data:/var/lib/kafka/data
+    restart: unless-stopped
+    healthcheck:
+      test:
+        [
+          'CMD-SHELL',
+          'kafka-broker-api-versions --bootstrap-server localhost:9092 || exit 1',
+        ]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 60s
 
   product-db:
     image: mongo:7.0
     container_name: product-db
     ports:
-      - "27017:27017"
+      - '27017:27017'
     volumes:
       - product-db-data:/data/db
     environment:
       MONGO_INITDB_DATABASE: productdb
+    restart: unless-stopped
 
   login-db:
     image: mongo:7.0
     container_name: login-db
     ports:
-      - "27018:27017"
+      - '27018:27017'
     volumes:
       - login-db-data:/data/db
     environment:
       MONGO_INITDB_DATABASE: logindb
+    restart: unless-stopped
 
   user-db-node:
     image: mongo:7.0
     container_name: user-db-node
     ports:
-      - "27019:27017"
+      - '27019:27017'
     volumes:
       - user-db-node-data:/data/db
     environment:
       MONGO_INITDB_DATABASE: userdbnode
+    restart: unless-stopped
 
   user-db-csharp:
     image: mongo:7.0
     container_name: user-db-csharp
     ports:
-      - "27020:27017"
+      - '27020:27017'
     volumes:
       - user-db-csharp-data:/data/db
     environment:
       MONGO_INITDB_DATABASE: userdbcsharp
+    restart: unless-stopped
 
 volumes:
   kafka-data:
